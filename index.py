@@ -9,12 +9,13 @@ from random import randint
 # 3.3 - Mutation
 # 4 - Solution found
 
+### Base classes/functions
 class Subject:
   def __init__(self, values:[int]):
     self.values = values
 
-### Base functions
-def create_subject(subjects_size:int):
+## Create a single subject node
+def create_subject(subjects_size:int)->Subject:
   values = []
 
   for i in range(subjects_size):
@@ -22,6 +23,7 @@ def create_subject(subjects_size:int):
 
   return Subject(values=values)
 
+## Create a population based on chromosomes size
 def create_population(chromosomes:int)->[Subject]:
   population = []
 
@@ -30,24 +32,42 @@ def create_population(chromosomes:int)->[Subject]:
 
   return population
 
-def fitness():
-  print('fitness')
+## Verifies the subject fitness value based on model
+def fitness(subject:Subject)->int:
+  fitness_value = 0
 
-### Selection strategy: random
-def selection():
-  print('selection')
+  for i in range(len(subject.values)):
+    if (subject.values[i] == model[i]):
+      fitness_value += 1
 
-def crossover():
+  return fitness_value
+
+### Selection
+def selection(population:[Subject]):
+  scored = []
+  selected = []
+  parents = 2
+
+  scored = [(fitness(subject=subject), subject.values) for subject in population]
+  scored = [fitness_value_with_subject for fitness_value_with_subject in sorted(scored)]
+
+  for i in range(len(scored)):
+    print(scored[i], '\n')
+
+  selected = scored[(len(scored) - parents):]
+
+  return selected, scored
+
+def crossover(selected, scored):
   print('crossover')
 
 def mutation():
   print('mutation')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   model = [1, 2, 3, 4, 5, 6]
   chromosomes=80
-
   population = create_population(chromosomes=chromosomes)
 
-  for subject in population:
-    print(subject.values)
+  # for i in range(chromosomes):
+  selected, scored = selection(population=population)
