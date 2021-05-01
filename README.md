@@ -1,4 +1,4 @@
-# Genetic Algorithm Study
+# Genetic Algorithms Study
 
 ----------
 Released in 2021. This project is under the MIT license.
