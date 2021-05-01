@@ -1,6 +1,6 @@
-from random import randint, sample
+from random import randint, random, sample
 
-### Common Genetic Algorithm sequence:
+### Genetic Algorithm sequence:
 # 1 - Create a population
 # 2 - Fitness calculation
 # 3 - Verify if found a solution
@@ -10,8 +10,11 @@ from random import randint, sample
 # 4 - Solution found
 
 ### Base constants/functions
-PARENTS: int = 2
-SUBJECT_SIZE: int = 6
+MODEL = [9, 9, 9, 9]
+SUBJECT_SIZE = len(MODEL)
+NUMBER_OF_PARENTS = 2
+MUTATION_PROB = 0.5
+CHROMOSOMES = 80
 
 ## Create a single subject node
 def create_subject(subject_size:int=SUBJECT_SIZE)->[int]:
@@ -36,25 +39,26 @@ def fitness(subject:[int])->int:
   fitness_value = 0
 
   for i in range(len(subject)):
-    if (subject[i] == model[i]):
+    if (subject[i] == MODEL[i]):
       fitness_value += 1
 
   return fitness_value
 
 ### Selection strategy: selects the two most fit
-def selection(population:[int]):
+def selection(population:[int])->[[int]]:
   scored_subjects = []
   selected = []
 
   scored_subjects = [(fitness(subject=subject), subject) for subject in population]
   scored_subjects = [fitness_value_with_subject[1] for fitness_value_with_subject in sorted(scored_subjects)]
 
-  selected = scored_subjects[len(scored_subjects) - PARENTS:]
+  selected = scored_subjects[len(scored_subjects) - NUMBER_OF_PARENTS:]
 
   return crossover(selected=selected, population=scored_subjects)
 
-def crossover(selected:[[int]], population:[[int]]):
-  for i in range(len(population) - PARENTS):
+### Crossover strategy: selects two random point of a subject
+def crossover(selected:[[int]], population:[[int]])->[[int]]:
+  for i in range(len(population) - NUMBER_OF_PARENTS):
     point = randint(1, SUBJECT_SIZE - 1)
     parent = sample(population=selected, k=2)
 
@@ -63,13 +67,27 @@ def crossover(selected:[[int]], population:[[int]]):
 
   return population
 
-def mutation():
-  print('mutation')
+### Mutation strategy: replace a subject random value/position with a new random value
+def mutation(population:[[int]])->[[int]]:
+  for i in range(len(population) - NUMBER_OF_PARENTS):
+    if (random() <= MUTATION_PROB):
+      index_for_mutation_value = randint(0, SUBJECT_SIZE - 1)
+      new_value = randint(1, 9)
+
+      while new_value == population[i][index_for_mutation_value]:
+        new_value = randint(1, 9)
+
+      population[i][index_for_mutation_value] = new_value
+
+  return population
 
 if __name__ == '__main__':
-  model = [1, 2, 3, 4, 5, 6]
-  chromosomes = 80
-  population = create_population(chromosomes=chromosomes)
+  population = create_population(chromosomes=CHROMOSOMES)
 
-  # for i in range(chromosomes):
-  population = selection(population=population)
+  print(f'Generation 1 - First Population: ', population, '\n')
+
+  for i in range(CHROMOSOMES):
+    population = selection(population=population)
+    population = mutation(population=population)
+
+  print(f'Generation {CHROMOSOMES} - Final Population: ', population, '\n')
