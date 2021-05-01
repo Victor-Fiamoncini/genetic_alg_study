@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, sample
 
 ### Common Genetic Algorithm sequence:
 # 1 - Create a population
@@ -9,65 +9,67 @@ from random import randint
 # 3.3 - Mutation
 # 4 - Solution found
 
-### Base classes/functions
-class Subject:
-  def __init__(self, values:[int]):
-    self.values = values
+### Base constants/functions
+PARENTS: int = 2
+SUBJECT_SIZE: int = 6
 
 ## Create a single subject node
-def create_subject(subjects_size:int)->Subject:
+def create_subject(subject_size:int=SUBJECT_SIZE)->[int]:
   values = []
 
-  for i in range(subjects_size):
+  for i in range(subject_size):
     values.append(randint(0, 9))
 
-  return Subject(values=values)
+  return values
 
 ## Create a population based on chromosomes size
-def create_population(chromosomes:int)->[Subject]:
+def create_population(chromosomes:int)->[[int]]:
   population = []
 
   for i in range(chromosomes):
-    population.append(create_subject(subjects_size=6))
+    population.append(create_subject())
 
   return population
 
 ## Verifies the subject fitness value based on model
-def fitness(subject:Subject)->int:
+def fitness(subject:[int])->int:
   fitness_value = 0
 
-  for i in range(len(subject.values)):
-    if (subject.values[i] == model[i]):
+  for i in range(len(subject)):
+    if (subject[i] == model[i]):
       fitness_value += 1
 
   return fitness_value
 
-### Selection
-def selection(population:[Subject]):
-  scored = []
+### Selection strategy: selects the two most fit
+def selection(population:[int]):
+  scored_subjects = []
   selected = []
-  parents = 2
 
-  scored = [(fitness(subject=subject), subject.values) for subject in population]
-  scored = [fitness_value_with_subject for fitness_value_with_subject in sorted(scored)]
+  scored_subjects = [(fitness(subject=subject), subject) for subject in population]
+  scored_subjects = [fitness_value_with_subject[1] for fitness_value_with_subject in sorted(scored_subjects)]
 
-  for i in range(len(scored)):
-    print(scored[i], '\n')
+  selected = scored_subjects[len(scored_subjects) - PARENTS:]
 
-  selected = scored[(len(scored) - parents):]
+  return crossover(selected=selected, population=scored_subjects)
 
-  return selected, scored
+def crossover(selected:[[int]], population:[[int]]):
+  for i in range(len(population) - PARENTS):
+    point = randint(1, SUBJECT_SIZE - 1)
+    parent = sample(population=selected, k=2)
 
-def crossover(selected, scored):
-  print('crossover')
+    population[i][:point] = parent[0][:point]
+    population[i][point:] = parent[1][point:]
+
+  return population
 
 def mutation():
   print('mutation')
 
 if __name__ == '__main__':
   model = [1, 2, 3, 4, 5, 6]
-  chromosomes=80
+  chromosomes = 80
   population = create_population(chromosomes=chromosomes)
 
   # for i in range(chromosomes):
-  selected, scored = selection(population=population)
+  population = selection(population=population)
