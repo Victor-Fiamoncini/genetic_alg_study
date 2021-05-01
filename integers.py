@@ -56,14 +56,14 @@ def selection(population:[int])->[[int]]:
 
   return crossover(selected=selected, population=scored_subjects)
 
-### Crossover strategy: selects two random point of a subject
+### Crossover strategy: replace a subject value with some parent values
 def crossover(selected:[[int]], population:[[int]])->[[int]]:
   for i in range(len(population) - NUMBER_OF_PARENTS):
-    point = randint(1, SUBJECT_SIZE - 1)
+    index = randint(1, SUBJECT_SIZE - 1)
     parent = sample(population=selected, k=2)
 
-    population[i][:point] = parent[0][:point]
-    population[i][point:] = parent[1][point:]
+    population[i][:index] = parent[0][:index]
+    population[i][index:] = parent[1][index:]
 
   return population
 
@@ -84,6 +84,7 @@ def mutation(population:[[int]])->[[int]]:
 if __name__ == '__main__':
   population = create_population(chromosomes=CHROMOSOMES)
 
+  print(f'Model {MODEL}', '\n')
   print(f'Generation 1 - First Population: ', population, '\n')
 
   for i in range(CHROMOSOMES):
