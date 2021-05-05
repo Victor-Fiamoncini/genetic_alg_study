@@ -35,20 +35,20 @@ if __name__ == '__main__':
 
     return fitness_value
 
-  # Selection strategy: selects the two most fit
-  def selection(population:[str])->[str]:
-    for individual in population:
-      if individual == MODEL:
-        print('Found')
-        break
+  # Selects the two most fit (smallest score == most fit)
+  def selection(population:[str])->[[str], [str]]:
+    scored_individuals = [(fitness(individual), individual) for individual in population]
+    scored_individuals = [scored_individual[1] for scored_individual in sorted(scored_individuals)]
 
-      individual_with_fitness_value = (individual, fitness(individual=individual))
+    most_fit = scored_individuals[:NUMBER_OF_PARENTS]
 
-      print('individual_with_fitness_value', individual_with_fitness_value, '\n')
+    return [most_fit, scored_individuals]
 
   population = create_population(chromosomes=CHROMOSOMES)
 
   # for i in range(CHROMOSOMES):
-  population = selection(population=population)
+  [selected, population] = selection(population=population)
+
+  print(selected, population)
 
 
