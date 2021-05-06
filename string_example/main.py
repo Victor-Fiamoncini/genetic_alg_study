@@ -1,7 +1,7 @@
 from random import choice, randint, random, sample
 from string import ascii_letters
 
-MODEL = input('Type a model: ')
+MODEL = input('Type something: ')
 INDIVIDUAL_SIZE = len(MODEL)
 NUMBER_OF_PARENTS = 2
 MUTATION_PROB = 0.5
@@ -21,7 +21,7 @@ def create_population(chromosomes:int)->[str]:
   population = []
 
   for _ in range(chromosomes):
-    population.append(create_individual(individual_size=INDIVIDUAL_SIZE))
+    population.append(create_individual(INDIVIDUAL_SIZE))
 
   return population
 
@@ -75,12 +75,15 @@ def mutation(population:[str])->[str]:
   return population
 
 if __name__ == '__main__':
-  population = create_population(chromosomes=CHROMOSOMES)
+  population = create_population(CHROMOSOMES)
 
-  for i in range(CHROMOSOMES):\
+  for i in range(CHROMOSOMES):
     [selected, population] = selection(population)
+
+    print(f'Generation {i + 1}, most fit members: ', selected, '\n')
+
+    if MODEL in selected:
+      break
+
     population = crossover(selected, population)
     population = mutation(population)
-
-  print(selected, population)
-
